@@ -18,6 +18,6 @@ public class DialogFragment extends androidx.fragment.app.DialogFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        return inflater.inflate(R.layout.fragment_dialog, container, false);
+        return inflater.inflate(R.layout.fragment_dialog3, container, false);
     }
 }
