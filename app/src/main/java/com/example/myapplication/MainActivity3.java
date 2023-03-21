@@ -1,54 +1,67 @@
 package com.example.myapplication;
 
-import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.content.res.Configuration;
+import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
+import android.widget.Toast;
 
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
+import com.example.myapplication.PizzaDetailFragment;
+import com.example.myapplication.PizzaMenuFragment;
 
-import com.example.myapplication.databinding.ActivityMain3Binding;
-
-public class MainActivity3 extends AppCompatActivity {
-
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMain3Binding binding;
+public class MainActivity3 extends AppCompatActivity implements PizzaMenuFragment.OnItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main3);
 
+        Log.d("DEBUG", getResources().getConfiguration().orientation + "");
 
-        binding = ActivityMain3Binding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        if (savedInstanceState == null) {
+            // Instance of first fragment
+            PizzaMenuFragment firstFragment = new PizzaMenuFragment();
 
-        setSupportActionBar(binding.toolbar);
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.add(R.id.flContainer, firstFragment);
+            ft.commit();
+        }
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            PizzaDetailFragment secondFragment = new PizzaDetailFragment();
+            Bundle args = new Bundle();
+            args.putInt("position", 0);
+            secondFragment.setArguments(args);
+            FragmentTransaction ft2 = getSupportFragmentManager().beginTransaction();
+            ft2.add(R.id.flContainer2, secondFragment);
+            ft2.commit();
+        }
     }
 
     @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
+    public void onPizzaItemSelected(int position){
+        Toast.makeText(this, "Called by Fragment A: position - "+ position, Toast.LENGTH_SHORT).show();
+
+        PizzaDetailFragment secondFragment = new PizzaDetailFragment();
+
+        Bundle args = new Bundle();
+        args.putInt("position", position);
+        secondFragment.setArguments(args);
+
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.flContainer2, secondFragment)
+                    .commit();
+        }
+        else {
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.flContainer, secondFragment)
+                    .addToBackStack(null)
+                    .commit();
+        }
     }
 }
